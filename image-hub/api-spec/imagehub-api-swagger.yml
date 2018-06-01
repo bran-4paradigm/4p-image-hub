@@ -1,0 +1,58 @@
+consumes:
+- application/json
+info:
+  description: Image-Hub
+  title: image-hub
+  version: 0.0.1
+produces:
+- application/json
+swagger: "2.0"
+schemes:
+- http
+basePath: /image-hub/v1
+paths:
+  /pushimage:
+    post:
+      tags:
+        - providers
+      operationId: addProvider
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/pushpayload"
+      responses:
+        202:
+          description: Accepted
+          schema:
+            type: string
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+
+definitions:
+  error:
+    type: object
+    required:
+      - faultstring
+    properties:
+      faultcode:
+        type: string
+      faultstring:
+        type: string
+  pushpayload:
+    type: object
+    required:
+      - filepath
+      - repository
+    properties:
+      filepath:
+        type: string
+      repository:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
