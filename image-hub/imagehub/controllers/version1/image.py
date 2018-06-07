@@ -4,6 +4,7 @@ import os
 import subprocess
 import tempfile
 import json
+import webob.exc
 
 from pecan.rest import RestController
 from wsmeext.pecan import wsexpose
@@ -29,6 +30,11 @@ class PushImageController(RestController):
         password = os.environ.get("PASSWORD")
         registry = os.environ.get("REGISTRY")
         timeout = os.environ.get("TIMEOUT")
+
+        if registry is None:
+            raise webob.exc.HTTPBadRequest(
+                "Registry can not be None"
+            )
 
         fd, tmp_file = tempfile.mkstemp(
             prefix="image_conf", dir="/tmp"
@@ -66,7 +72,9 @@ class PushImageController(RestController):
             code = e.returncode
             LOG.error(out_bytes)
             LOG.error(code)
-            return out_bytes
+            raise webob.exc.HTTPBadRequest(
+                "Execute push image client error"
+            )
 
         res =  push_task.stdout.read()
         LOG.info(res)

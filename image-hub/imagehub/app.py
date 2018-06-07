@@ -1,6 +1,8 @@
 from pecan import make_app
 from imagehub import model
 
+from imagehub.controllers.hooks import error_hook
+
 
 def setup_app(config):
 
@@ -10,5 +12,6 @@ def setup_app(config):
     return make_app(
         app_conf.pop('root'),
         logging=getattr(config, 'logging', {}),
+        hooks=[error_hook.JSONErrorHook()],
         **app_conf
     )
